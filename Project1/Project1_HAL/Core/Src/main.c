@@ -1,6 +1,7 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
+  * @project-name	: Project 1 (with HAL Library)
   * @file           : main.c
   * @brief          : Main program body
   ******************************************************************************
@@ -111,8 +112,8 @@ int main(void)
 
 	  }
 
-	  //Check if the pull-down button is pressed.
-	  if (HAL_GPIO_ReadPin(B3_GPIO_Port, B3_Pin))
+	  //Or check if the pull-down button is pressed.
+	  else if (HAL_GPIO_ReadPin(B3_GPIO_Port, B3_Pin))
 	  {
 
 		  //50ms bounce time
@@ -126,6 +127,11 @@ int main(void)
 
 		  //Change the state of push-pull led
 		  HAL_GPIO_TogglePin(LD4_GPIO_Port, LD4_Pin);
+	  }
+
+	  else
+	  {
+		  continue;
 	  }
     /* USER CODE END WHILE */
     /* USER CODE BEGIN 3 */

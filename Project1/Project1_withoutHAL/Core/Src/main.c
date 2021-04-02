@@ -48,9 +48,9 @@
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-static void MX_GPIO_Init(void);
-/* USER CODE BEGIN PFP */
 
+/* USER CODE BEGIN PFP */
+static void GPIO_Init(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -85,8 +85,11 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-  MX_GPIO_Init();
+
   /* USER CODE BEGIN 2 */
+
+  //Initialize GPIO Ports
+  GPIO_Init();
 
   /* USER CODE END 2 */
 
@@ -184,52 +187,63 @@ void SystemClock_Config(void)
   * @param None
   * @retval None
   */
-static void MX_GPIO_Init(void)
+static void GPIO_Init(void)
 {
-  GPIO_InitTypeDef GPIO_InitStruct = {0};
-
   /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOC_CLK_ENABLE();
-  __HAL_RCC_GPIOF_CLK_ENABLE();
-  __HAL_RCC_GPIOA_CLK_ENABLE();
+  RCC->AHBENR |= (1 << 17); //GPIOA
+  RCC->AHBENR |= (1 << 19); //GPIOC
 
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, LD2_Pin|LD4_Pin, GPIO_PIN_RESET);
+  /*Configure GPIOA 11 pin : push-pull led */
 
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_SET);
+  //Set GPIO pin output
+  GPIOA->MODER |= (1 << 22);
+  GPIOA->MODER &= ~(1 << 23);
 
-  /*Configure GPIO pin : B1_Pin */
-  GPIO_InitStruct.Pin = B1_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
+  //Enable push-pull output mode
+  GPIOA->OTYPER &= ~(1 << 11);
 
-  /*Configure GPIO pin : B2_Pin */
-  GPIO_InitStruct.Pin = B2_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  HAL_GPIO_Init(B2_GPIO_Port, &GPIO_InitStruct);
+  //Set low output speed
+  GPIOA->OSPEEDR &= ~(1 << 22);
 
-  /*Configure GPIO pins : LD2_Pin LD4_Pin */
-  GPIO_InitStruct.Pin = LD2_Pin|LD4_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+  //Set no pull-up, no pull-down
+  GPIOA->PUPDR &= ~(1 << 22);
+  GPIOA->PUPDR &= ~(1 << 23);
 
-  /*Configure GPIO pin : B3_Pin */
-  GPIO_InitStruct.Pin = B3_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-  HAL_GPIO_Init(B3_GPIO_Port, &GPIO_InitStruct);
+  /*Configure GPIOA 12 pin: open-drain led */
 
-  /*Configure GPIO pin : LD3_Pin */
-  GPIO_InitStruct.Pin = LD3_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(LD3_GPIO_Port, &GPIO_InitStruct);
+  //Set GPIO pin output
+  GPIOA->MODER |= (1 << 24);
+  GPIOA->MODER &= ~(1 << 25);
+
+  //Enable open-drain output mode
+  GPIOA->OTYPER |= (1 << 12);
+
+  //Set low output speed
+  GPIOA->OSPEEDR &= ~(1 << 24);
+
+  //Set no pull-up, no pull-down
+  GPIOA->PUPDR &= ~(1 << 24);
+  GPIOA->PUPDR &= ~(1 << 25);
+
+  /*Configure GPIOC 2 pin : pull-up led */
+
+  //Set GPIO pin input
+  GPIOC->MODER &= ~(1 << 4);
+  GPIOC->MODER &= ~(1 << 5);
+
+  //Enable pull-up output mode
+  GPIOC->PUPDR |= (1 << 4);
+  GPIOC->PUPDR &= ~(1 << 5);
+
+  /*Configure GPIOC 8 pin : pull-down button */
+
+  //Set GPIO pin input
+  GPIOC->MODER &= ~(1 << 16);
+  GPIOC->MODER &= ~(1 << 17);
+
+  //Enable pull-down input mode
+  GPIOC->PUPDR &= ~(1 << 16);
+  GPIOC->PUPDR |= (1 << 17);
 
 }
 

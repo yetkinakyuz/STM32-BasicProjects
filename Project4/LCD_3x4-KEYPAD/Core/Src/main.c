@@ -97,8 +97,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   char* key;
 
-  int pos_1 = 1;
-  int pos_2 = 5;
+  int pos = 5;
 
   InitLCD();
   lcd_data(1, 3, "LCD & KEYPAD");
@@ -110,31 +109,30 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
 	  key = keypad_scanner();
+
+	  HAL_Delay(100);
 
 	  if (key != 'n')
 	  {
-		  HAL_Delay(100);
+		  lcd_data(2, pos, &key);
 
-		  lcd_data(2, pos_2, &key);
-
-		  if(pos_2 >= 16)
+		  if(pos >= 16)
 		  {
 			  HAL_Delay(100);
 
-			  pos_2 = 5;
-			  lcd_data(2, pos_2, "                ");
+			  pos = 5;
 
+			  lcd_data(2, pos, "                ");
 			  lcd_data(2, 1, "KEY:");
-			  lcd_data(2, pos_2, &key);
+			  lcd_data(2, pos, &key);
 
-			  pos_2++;
+			  pos++;
 		  }
 
 		  else
 		  {
-			  pos_2++;
+			  pos++;
 		  }
 	  }
     /* USER CODE END WHILE */
@@ -378,6 +376,8 @@ char keypad_scanner(void)
 		return '3';
 	}
 
+	HAL_Delay(50);
+
 	HAL_GPIO_WritePin(R1_GPIO_Port, R1_Pin, 1); //Pin voltage level is '1'
 	HAL_GPIO_WritePin(R2_GPIO_Port, R2_Pin, 0); //Pin voltage level is '0'
 	HAL_GPIO_WritePin(R3_GPIO_Port, R3_Pin, 1); //Pin voltage level is '1'
@@ -409,6 +409,8 @@ char keypad_scanner(void)
 
 		return '6';
 	}
+
+	HAL_Delay(50);
 
 	HAL_GPIO_WritePin(R1_GPIO_Port, R1_Pin, 1); //Pin voltage level is '1'
 	HAL_GPIO_WritePin(R2_GPIO_Port, R2_Pin, 1); //Pin voltage level is '1'
@@ -442,6 +444,8 @@ char keypad_scanner(void)
 		return '9';
 	}
 
+	HAL_Delay(50);
+
 	HAL_GPIO_WritePin(R1_GPIO_Port, R1_Pin, 1); //Pin voltage level is '1'
 	HAL_GPIO_WritePin(R2_GPIO_Port, R2_Pin, 1); //Pin voltage level is '1'
 	HAL_GPIO_WritePin(R3_GPIO_Port, R3_Pin, 1); //Pin voltage level is '1'
@@ -473,6 +477,8 @@ char keypad_scanner(void)
 
 		return '#';
 	}
+
+	HAL_Delay(50);
 
 	return 'n';
 }
